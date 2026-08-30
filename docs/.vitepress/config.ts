@@ -50,19 +50,19 @@ const technicalSidebar = [
     ]
   },
   {
-    text: '进阶架构与功能指南',
+    text: '功能与进阶使用',
     collapsed: false,
     items: [
-      { text: '快速开始（环境与编译）', link: '/guide/getting-started' },
-      { text: '界面与四窗口架构', link: '/guide/ui-and-windows' },
+      { text: '快速开始与源码运行', link: '/guide/getting-started' },
+      { text: '界面与窗口说明', link: '/guide/ui-and-windows' },
       { text: 'Live2D 桌宠与模型管理', link: '/guide/live2d-models' },
       { text: 'AI 对话与 Agent 配置', link: '/guide/ai-chat-agent' },
       { text: 'Living Memory 长期记忆', link: '/guide/memory-system' },
       { text: '语音交互与口型同步', link: '/guide/voice-system' },
       { text: '技能扩展与定时提醒', link: '/guide/skills-reminders' },
-      { text: 'MCP 协议扩展集成', link: '/guide/mcp-integration' },
+      { text: 'MCP 工具集成', link: '/guide/mcp-integration' },
       { text: '浏览器与桌面自动化', link: '/guide/automation' },
-      { text: '插件系统 (NPS 2.0)', link: '/guide/plugin-system' }
+      { text: '插件系统 NPS 2.0', link: '/guide/plugin-system' }
     ]
   },
   {
@@ -71,16 +71,16 @@ const technicalSidebar = [
     items: [
       { text: '安全模式 (--safe-mode)', link: '/operations/safe-mode' },
       { text: '脱敏诊断与日志导出', link: '/operations/diagnostics' },
-      { text: '跨平台矩阵与能力降级', link: '/operations/platform-matrix' },
+      { text: '跨平台支持与能力差异', link: '/operations/platform-matrix' },
       { text: '常见问题与排障 (FAQ)', link: '/operations/faq' }
     ]
   },
   {
-    text: '技术参考与规范',
+    text: '进一步了解',
     collapsed: false,
     items: [
-      { text: '系统架构与桥接协议', link: '/reference/architecture' },
-      { text: '安全存储与加密规范', link: '/reference/security-spec' }
+      { text: '系统结构与通信说明', link: '/reference/architecture' },
+      { text: '凭据与本地数据安全', link: '/reference/security-spec' }
     ]
   }
 ]
@@ -88,7 +88,7 @@ const technicalSidebar = [
 export default defineConfig({
   title: 'Nori Desktop Pet',
   description:
-    '基于 .NET 10 + Avalonia 12 原生宿主与 Vue 3 + UnoCSS 架构的高性能 Live2D 桌面智能伴侣',
+    'Nori Desktop Pet 用户文档：下载安装、Live2D 桌宠、AI、语音、记忆、MCP、插件与排障',
 
   lastUpdated: true,
   cleanUrls: true,
@@ -130,46 +130,47 @@ export default defineConfig({
         ]
       },
       {
-        text: '进阶与开发指南',
+        text: '功能与进阶',
         items: [
-          { text: '快速开始（源码构建）', link: '/guide/getting-started' },
-          { text: '四窗口架构', link: '/guide/ui-and-windows' },
-          { text: 'Live2D 渲染引擎', link: '/guide/live2d-models' },
+          { text: '快速开始与源码运行', link: '/guide/getting-started' },
+          { text: '界面与窗口说明', link: '/guide/ui-and-windows' },
+          { text: 'Live2D 渲染与模型', link: '/guide/live2d-models' },
           { text: 'AI 对话与 Agent', link: '/guide/ai-chat-agent' },
           { text: 'Living Memory 记忆库', link: '/guide/memory-system' },
-          { text: '全链路语音交互', link: '/guide/voice-system' },
+          { text: '语音交互', link: '/guide/voice-system' },
           { text: '技能与定时提醒', link: '/guide/skills-reminders' },
-          { text: 'MCP 协议扩展', link: '/guide/mcp-integration' },
+          { text: 'MCP 工具集成', link: '/guide/mcp-integration' },
           { text: '自动化与审计', link: '/guide/automation' },
           { text: '插件系统 NPS 2.0', link: '/guide/plugin-system' }
         ]
       },
       {
-        text: '运维与排障',
+        text: '排障与兼容性',
         items: [
           { text: '安全排障模式', link: '/operations/safe-mode' },
           { text: '脱敏诊断与日志', link: '/operations/diagnostics' },
-          { text: '跨平台矩阵与降级', link: '/operations/platform-matrix' },
-          { text: '常见问题 (FAQ)', link: '/operations/faq' }
-        ]
-      },
-      {
-        text: '技术参考',
-        items: [
-          { text: '系统架构与通信桥接', link: '/reference/architecture' },
-          { text: '安全存储与加密规范', link: '/reference/security-spec' }
+          { text: '跨平台支持', link: '/operations/platform-matrix' },
+          { text: '常见问题', link: '/operations/faq' }
         ]
       },
       {
         text: '相关链接',
         items: [
           {
-            text: 'Steam 商店页',
-            link: 'https://store.steampowered.com/app/4996280/I_NORI/'
+            text: '下载最新版',
+            link: 'https://github.com/MF-Dust/Nori.Desktop/releases/latest'
           },
           {
-            text: 'DeepWiki 知识库',
-            link: 'https://deepwiki.ai/MF-Dust/Nori-Desktop-Pet'
+            text: 'Nori.Desktop 源码',
+            link: 'https://github.com/MF-Dust/Nori.Desktop'
+          },
+          {
+            text: 'Nori.PluginSDK',
+            link: 'https://github.com/MF-Dust/Nori.PluginSDK'
+          },
+          {
+            text: 'Steam 商店页',
+            link: 'https://store.steampowered.com/app/4996280/I_NORI/'
           }
         ]
       }
@@ -213,11 +214,11 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/MF-Dust/Nori-Desktop-Pet' }
+      { icon: 'github', link: 'https://github.com/MF-Dust/Nori.Desktop' }
     ],
 
     footer: {
-      message: '基于 GPLv3 开源协议发布 · 实事求是 · 纯粹守护',
+      message: '基于 GPLv3 开源协议发布 · 文档以当前实际功能为准',
       copyright: 'Copyright © 2025-2026 Nori Desktop Pet Team'
     },
 

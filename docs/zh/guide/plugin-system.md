@@ -1,92 +1,57 @@
-# 插件系统 (NPS 2.0)
+# 插件系统 NPS 2.0
 
-Nori Plugin Specification 2.0（NPS 2.0）是专为 Nori Desktop Pet 打造的轻量级受信任进程内扩展基础设施。
+Nori 支持通过 `.noripack` 安装本地插件。插件可以增加新的工具、独立小窗口，也可以把自己的交互卡片放进聊天界面。
 
----
+## 安装插件前需要知道
 
-## 1. 核心架构与安全定位
+Nori 插件属于本机进程内扩展，拥有比普通网页更高的能力。因此插件只适合从可信来源获取，或者安装自己检查、编译的插件包。
 
-```mermaid
-flowchart TD
-    subgraph Host[Nori 宿主进程]
-        PRH[PluginRuntimeHost 插件运行时宿主]
-        AS[AssetServer 附加资源路由]
-        PB[PluginBridge 独立安全总线]
-    end
+当前插件系统没有在线 Marketplace，也没有自动下载、自动更新或统一签名商店。
 
-    subgraph ALC[可回收 AssemblyLoadContext 隔离区]
-        P1[插件 A 实例 & 私有依赖]
-        P2[插件 B 实例 & 私有依赖]
-    end
+## 安装本地插件
 
-    subgraph UI[插件 Web 视口]
-        WV[PluginWindowHost 独立透明 WebView]
-    end
-
-    PRH --> ALC
-    PRH --> UI
-    AS -->|提供 web/ 静态资源| WV
-    PB <-->|隔离通信通道| WV
-```
-
-::: warning 受信任扩展边界认知
-- 插件属于 **.NET 进程内扩展**。
-- `AssemblyLoadContext`（ALC）用于**依赖隔离与尝试卸载**，**不是操作系统级安全沙箱**。
-- 请仅安装来自可信来源或自行编译审查过的 `.noripack` 插件包。
-:::
-
----
-
-## 2. `.noripack` 插件包结构与清单规范
-
-`.noripack` 是符合特定目录布局的 ZIP 压缩包：
-
-```text
-my-plugin.noripack (ZIP)
-├── manifest.json       # 核心元数据与清单配置 (必需)
-├── README.md           # 插件说明文档 (可选)
-├── icon.png            # 插件图标 (可选)
-├── lib/                # 托管程序集入口及私有依赖 DLL
-│   └── MyPlugin.dll
-└── web/                # 插件前端公开 Web 资源 (HTML/CSS/JS)
-    └── index.html
-```
-
-### `manifest.json` 示例与字段要求
-
-```json
-{
-  "schemaVersion": 1,
-  "id": "io.nori.pomodoro",
-  "name": "Nori 番茄钟",
-  "description": "为桌宠添加精美的番茄工作法悬浮时钟与专注统计",
-  "version": "1.0.0",
-  "authors": [{ "name": "Nori Community" }],
-  "apiVersion": "2.0",
-  "minHostVersion": "1.0.0",
-  "runtime": {
-    "kind": "dotnet",
-    "assembly": "lib/MyPlugin.dll",
-    "entryType": "Nori.Plugins.PomodoroPlugin"
-  },
-  "ui": { "webRoot": "web" },
-  "capabilities": ["ui.webview"],
-  "platforms": ["windows", "linux", "macos"]
-}
-```
-
-- **`apiVersion`**：必须与宿主主版本匹配（当前为 `2.0`）。
-- **`capabilities`**：当前标准宿主能力为 `ui.webview`（提供透明 Web 独立窗口与桥接）。
-
----
-
-## 3. 插件管理与生命周期
+在主控制台的 **设置 → 插件** 中，可以选择本地 `.noripack` 文件进行安装。
 
 <UiPluginsPreview />
 
-在主控制台的 **「设置」→「插件」** 面板中，提供全套可视化管理：
+安装时 Nori 会检查插件包结构和路径安全。新安装的插件默认不会直接启用，需要由用户手动开启。
 
-- **本地安装**：点击「安装本地插件」，选择 `.noripack` 包，系统将自动进行格式合规性检查并解压至 `<data>/plugins/<pluginId>/`。
-- **动态启用与禁用**：无需重启主应用即可通过创建/回收 `AssemblyLoadContext` 完成插件的热插拔。
-- **安全卸载**：支持在卸载时选择是否保留插件的私有本地存储（`PluginStorage`）。
-- **安全模式豁免**：以 `--safe-mode` 启动时，所有插件将强制保持未加载状态，确保核心系统稳定。
+插件数据保存在 Nori 自己的 `data` 目录中。卸载插件时，可以按界面选项决定是否同时删除插件自己的数据。
+
+## 启用、禁用与安全模式
+
+插件可以在设置页面启用或禁用。大多数插件能够在不关闭 Nori 的情况下切换状态；个别插件如果无法安全卸载，会提示需要重启后完成切换。
+
+使用 `--safe-mode` 启动 Nori 时，第三方插件不会被加载。此时仍可以查看插件列表、禁用或卸载故障插件，适合排查“装完插件后无法正常启动”这类问题。
+
+## 插件可以提供哪些内容
+
+当前 NPS 2.0 支持的主要扩展方式包括：
+
+- **插件动作**：插件可以向 Nori 提供可调用的操作。启用后，这些操作能够进入 AI 的工具列表，由 Nori 在对话中调用。
+- **插件窗口**：插件可以提供自己的 Web 界面，并在独立窗口中显示。
+- **聊天卡片**：如果插件包带有 `web/card.html`，Nori 可以在聊天区域加载这个卡片。播放控制、状态面板、搜索结果等交互都可以由插件自己实现。
+
+聊天卡片是通用机制，主程序不会为某个具体插件硬编码专属卡片。
+
+## 权限与安全边界
+
+插件窗口使用独立的通信通道，只能访问宿主明确开放的能力。插件自己的自定义命令也需要由插件显式注册。
+
+不过，这层限制不能把进程内插件变成完全隔离的沙箱。安装来源仍然是最重要的安全边界。
+
+## 插件作者
+
+NPS 2.0 的公开开发包已经发布为 NuGet 包 **`Nori.PluginSDK` 2.0.0**，目标框架为 .NET 10。
+
+插件项目可以使用：
+
+```bash
+dotnet add package Nori.PluginSDK --version 2.0.0
+```
+
+SDK 仓库和示例位于 [MF-Dust/Nori.PluginSDK](https://github.com/MF-Dust/Nori.PluginSDK)。插件包中不需要附带 Nori 自己的运行时程序集。
+
+::: tip 当前能力范围
+目前真正开放给插件使用的宿主界面能力以 WebView 为主。文档不会提前列出尚未正式提供的 Arcade、Games 等占位接口。
+:::

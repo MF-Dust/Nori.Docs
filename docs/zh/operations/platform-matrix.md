@@ -1,47 +1,66 @@
-# 跨平台支持与能力降级矩阵
+# 跨平台支持与能力差异
 
-Nori Desktop Pet 依托 .NET 10 + Avalonia 12 的跨平台底座开发，但受限于不同桌面显示服务器（Display Server）与窗口协议的物理特性，各平台在特性支持度与降级方案上存在差异。
+Nori 现在已经同时提供 Windows、Linux 和 macOS 发布包，不过三个平台的桌面环境能力并不完全相同。
 
----
+## 当前发布状态
 
-## 1. 跨平台支持矩阵对照表
+| 平台 | 正式发布包 | 当前建议 |
+| :--- | :---: | :--- |
+| **Windows x64** | ✅ | 主要验收平台，功能覆盖最完整 |
+| **Linux x64** | ✅ | 可使用正式包，X11 与 Wayland 行为会有差异 |
+| **macOS Apple Silicon** | ✅ | 可使用正式 arm64 包，部分桌面交互与 Windows 不同 |
 
-| 核心特性 | Windows x64 (正式发布) | Linux (X11) | Linux (Wayland) | macOS (Apple Silicon / Intel) |
-| :--- | :---: | :---: | :---: | :---: |
-| **发布与验收状态** | **正式发布 Blocker** | 源码编译 / 单测保障 | 源码编译 / 单测保障 | 源码编译 / 单测保障 |
-| **NativeWebView 引擎** | WebView2 Evergreen | WebKitGTK 4.1 | WebKitGTK 4.1 | WKWebView |
-| **Live2D 原生 OpenGL** |  支持 (OpenGL ES 2.0) |  支持 (依赖显卡驱动) |  支持 (依赖显卡驱动) |  支持 (依赖驱动) |
-| **模型尺寸透明穿透** |  `WM_NCHITTEST` |  X11 Shape 矩形 |  **降级为整窗可点** |  动态切换忽略鼠标 |
-| **全局光标视线追踪** |  原生支持 |  原生支持 |  **降级为窗内追踪** |  原生支持 |
-| **窗口原生拖拽** |  4px 原生拖拽 |  `_NET_WM_MOVERESIZE` | ️ 依赖能力标志 |  AppKit 拖拽 |
-| **系统托盘 (Tray)** |  支持 | ️ 依赖 StatusNotifier | ️ 视桌面环境而定 |  支持 |
-| **自动化 (Automation)** |  支持 (Edge) |  不支持 |  不支持 |  不支持 |
-| **凭据密钥库** | Windows DPAPI | libsecret / 受限文件 | libsecret / 受限文件 | macOS Keychain / 受限文件 |
+截至 2026 年 8 月 30 日，最新稳定版 **v1.3.0-Serika** 已发布上述三种平台资产。
 
-::: tip 验收口径说明
-上表中的“支持”指代码路径与抽象层已就绪并经单元测试覆盖。**Windows x64** 是目前完成实际桌面端物理全体验收的平台，发布说明不宣称 macOS / Linux 已提供免编译开箱即用的正式二进制包。
+::: tip “提供发布包”和“完整验收”是两回事
+Windows x64 仍是项目最主要的实际桌面验收平台。Linux 与 macOS 已经进入正式 Release，但不同发行版、桌面环境和系统权限设置仍可能造成体验差异。
 :::
 
----
+## 常见能力差异
 
-## 2. 能力驱动的优雅降级机制（Feature Degradation）
+| 功能 | Windows x64 | Linux X11 | Linux Wayland | macOS Apple Silicon |
+| :--- | :---: | :---: | :---: | :---: |
+| Live2D 桌宠 | ✅ | ✅ | ✅ | ✅ |
+| 主控制台 | ✅ | ✅ | ✅ | ✅ |
+| 桌宠置顶 | ✅ | ✅ | ✅ | ✅ |
+| 透明区域点击穿透 | ✅ | ✅ | 有限制 | ✅ |
+| 全局鼠标视线跟随 | ✅ | ✅ | 有限制 | ✅ |
+| 系统托盘 | ✅ | 取决于桌面环境 | 取决于桌面环境 | ✅ |
+| 麦克风语音输入 | ✅ | ✅ | ✅ | ✅，需要系统授权 |
+| 浏览器自动化 | ✅，需要 Edge | 暂不支持 | 暂不支持 | 暂不支持 |
 
-宿主在启动时通过 `IPlatformServices.Capabilities` 精确探测当前环境能力，并将状态注入 UI 快照：
+## Linux 用户需要注意什么
 
-```mermaid
-flowchart TD
-    INIT[平台环境探测] --> CAP{读取能力标志}
+### X11
 
-    CAP -->|supportsTray = false| TRAY_DEG[主界面顶部常驻渲染桌宠显隐开关]
-    CAP -->|supportsHitThrough = false| HIT_DEG[停止矩形形状同步，保持全窗透明可点，不中断 OpenGL 渲染]
-    CAP -->|supportsGlobalCursor = false| CURSOR_DEG[视线跟随自动降级为视窗内相对坐标追踪]
-    CAP -->|supportsWindowDrag = false| DRAG_DEG[界面提供显式拖拽热区]
-```
+X11 下可以使用桌宠点击穿透和全局鼠标跟随等能力，实际效果仍取决于窗口管理器和显卡驱动。
 
-### 关键降级场景处理
+### Wayland
 
-1. **Linux Wayland 协议限制**：
-   - Wayland 出于安全设计，默认禁止应用获取全局光标坐标与自定义窗口输入穿透形状。
-   - Nori 在 Wayland 下自动平滑降级为**整窗可点**与**窗内视线跟随**，OpenGL 物理渲染依然保持 60fps 稳定输出，绝不抛出未经处理的崩溃异常。
-2. **托盘缺失场景**：
-   - 当在无 StatusNotifier 扩展的 GNOME 等桌面环境运行时，主控制台会自动呈现备用控制按钮，确保用户随时能找回桌宠。
+Wayland 对全局鼠标位置和窗口输入区域有更严格的限制，因此 Nori 会自动采用兼容模式：
+
+- 桌宠可能保持整窗可点击。
+- 视线跟随可能只在窗口范围内工作。
+- 某些拖动行为会根据桌面环境能力调整。
+
+这些限制不会阻止 Live2D 正常渲染。
+
+## 系统托盘
+
+Windows 和 macOS 通常可以直接使用托盘入口。
+
+Linux 是否能显示托盘取决于当前桌面环境是否提供对应支持。如果托盘不可用，Nori 会在主界面保留可操作入口，不会因为托盘缺失而无法控制桌宠。
+
+## 运行时要求
+
+三平台当前正式包都采用 framework-dependent 分发，需要系统提供 **ASP.NET Core Runtime 10**。
+
+额外依赖：
+
+- Windows：Microsoft Edge WebView2 Evergreen Runtime
+- Linux：WebKitGTK 4.1、GTK 与可用 OpenGL 驱动
+- macOS：系统 WebKit
+
+## 当前没有提供的发布平台
+
+当前 Release 没有提供 Linux arm64，也没有提供 macOS Intel 的正式资产。文档不会把“源码层面可能可编译”写成“已有正式发布包”。
