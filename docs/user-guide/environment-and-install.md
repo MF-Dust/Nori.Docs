@@ -1,24 +1,26 @@
-# 环境准备与安装运行
+# 下载与安装
 
-这一页介绍如何下载、解压并启动 Nori，以及最新版正式发布包需要的运行环境。
+本教程会带你完成 Nori 的下载、解压和第一次启动。第一次使用时按顺序操作即可。
 
-## 1. 选择适合你的发布包
-
-截至 2026 年 8 月 30 日，最新稳定版是 **v1.3.0-Serika**。GitHub Release 当前提供三种平台包：
-
-| 平台 | 发布文件 | 当前说明 |
-| :--- | :--- | :--- |
-| **Windows x64** | `nori-1.3.0-Serika-win-x64-framework-dependent.zip` | 主要验收与推荐平台 |
-| **Linux x64** | `nori-1.3.0-Serika-linux-x64.tar.gz` | 已提供正式发布包，桌面环境能力存在差异 |
-| **macOS Apple Silicon** | `nori-1.3.0-Serika-osx-arm64.zip` | 已提供正式发布包 |
-
-可以从 [Nori.Desktop Releases](https://github.com/MF-Dust/Nori.Desktop/releases/latest) 获取最新版。
-
-::: warning 下载时请注意
-当前发布包是 **framework-dependent** 版本，包内不会附带完整 .NET 运行时。第一次使用前需要安装系统运行环境。
+::: tip 当前稳定版
+截至 2026 年 8 月 30 日，最新正式版本为 **v1.3.0-Serika**。
 :::
 
-## 2. 运行环境
+## 1. 下载 Nori
+
+前往 [Nori.Desktop Releases](https://github.com/MF-Dust/Nori.Desktop/releases/latest)，根据当前设备选择发布包：
+
+| 你的设备 | 下载这个文件 |
+| :--- | :--- |
+| **Windows x64** | `nori-1.3.0-Serika-win-x64-framework-dependent.zip` |
+| **Linux x64** | `nori-1.3.0-Serika-linux-x64.tar.gz` |
+| **macOS Apple Silicon** | `nori-1.3.0-Serika-osx-arm64.zip` |
+
+Windows x64 是目前主要的完整验收平台。Linux 和 macOS 已经提供正式发布包，部分桌面交互在不同系统环境下会有差异。
+
+## 2. 安装运行环境
+
+Nori 的正式发布包需要系统先安装对应的 .NET 运行环境。
 
 ### Windows x64
 
@@ -27,87 +29,82 @@
 - **ASP.NET Core Runtime 10 x64**
 - **Microsoft Edge WebView2 Evergreen Runtime**
 
-Windows 10/11 通常已经带有 WebView2。如果启动时提示 WebView2 缺失，再从微软官方页面安装即可。
-
-::: tip 为什么是 ASP.NET Core Runtime 10
-Nori 的本地界面资源和音频传输会使用内置的本机服务，因此正式发布包需要 ASP.NET Core Runtime 10。旧文档中写成“.NET Desktop Runtime 10”已经不符合当前发布结构。
-:::
+Windows 10/11 通常已经带有 WebView2。只有在启动时提示缺失时，才需要另外安装。
 
 ### Linux x64
 
 需要：
 
-- ASP.NET Core Runtime 10
-- WebKitGTK 4.1
+- **ASP.NET Core Runtime 10**
+- **WebKitGTK 4.1**
 - GTK 与可用的 OpenGL 驱动
-
-Linux 的托盘、全局鼠标和点击穿透效果会受 X11、Wayland 以及桌面环境影响，详情见 [跨平台支持与能力降级](../operations/platform-matrix.md)。
 
 ### macOS Apple Silicon
 
 需要：
 
-- ASP.NET Core Runtime 10
+- **ASP.NET Core Runtime 10**
 - 系统自带 WebKit
 
-当前 Release 提供的是 **Apple Silicon / arm64** 包。
+::: details 为什么还需要安装运行环境？
+当前 Release 为 framework-dependent 发布包，因此不会把完整 .NET 运行时一起打进压缩包。这里安装一次运行环境即可，平时使用 Nori 不需要处理这些内部细节。
+:::
 
-## 3. 解压与启动
+## 3. 解压并启动
 
-Nori 现在采用完整程序根目录分发。解压后请保留整个目录结构，不要只拿其中某个可执行文件出来运行。
+下载完成后，请把压缩包完整解压到一个固定目录，不要直接在压缩包里运行。
 
 ### Windows
 
-1. 将 ZIP 解压到一个你有写入权限的目录，例如 `D:\Apps\Nori`。
-2. 打开解压后的根目录。
-3. 运行最外层的 **`Nori.exe`**。
+1. 把 ZIP 解压到你有写入权限的位置，例如 `D:\Apps\Nori`。
+2. 打开解压后的 Nori 文件夹。
+3. 双击最外层的 **`Nori.exe`**。
 
 ### Linux
 
-解压整个 tar.gz 后，从根目录运行 **`Nori`**。
+解压整个 `tar.gz`，然后从 Nori 根目录启动最外层的 **`Nori`**。
 
 ### macOS
 
-解压后从最外层启动 **`Nori.app`**。
+解压 ZIP 后，启动最外层的 **`Nori.app`**。
 
-::: warning 不要直接运行内部版本目录
-发布包内部会包含 `.current` 和 `app-*` 等文件或目录，它们用于 Nori 选择当前可运行版本。日常启动只使用最外层的 `Nori` 入口即可。
+::: important 请从最外层启动 Nori
+解压目录中还会看到内部版本文件。日常使用时只需要启动最外层的 `Nori.exe`、`Nori` 或 `Nori.app`，也不要只移动其中某个内部文件夹。
 :::
 
-## 4. 第一次启动
+## 4. 完成第一次设置
 
 首次运行时会出现初始化向导：
 
 <UiWizardPreview />
 
-可以在向导中完成语言、模型和 AI 服务等基础设置。AI 配置可以暂时跳过，稍后再到主控制台中填写。
+跟随向导完成语言和基础设置即可。AI 服务可以当场配置，也可以先跳过，之后再到设置中完成。
 
-初始化完成后，Nori 会进入主控制台并显示桌面 Live2D 角色。
+初始化结束后，主控制台会打开，桌面上也会显示 Live2D 角色。
 
-## 5. 数据保存在哪里
+🎉 到这里，Nori 已经安装完成。接下来可以继续看看 **[和桌宠互动](./desk-pet-interaction.md)**。
 
-当前正式版会把运行数据放在 **Nori 程序根目录下的 `data` 文件夹**：
+## Nori 的数据保存在哪里
+
+Nori 会把设置、聊天、记忆、本地模型、插件和日志保存在程序根目录的 `data` 文件夹中。
 
 ```text
 Nori/
 ├── Nori.exe 或 Nori
-├── .current
-├── app-*/
+├── ...
 └── data/
 ```
 
-聊天、设置、记忆、本地模型、插件和日志都会放在这套数据目录中对应的位置。
+因此移动 Nori 时，保留整个文件夹最省心；更新程序时，也请保留原来的 `data` 文件夹。
 
-这意味着：
-
-- 把整套 Nori 文件夹移动到另一处时，数据也会跟着移动。
-- 更新程序时请保留现有的 `data` 文件夹。
-- 不建议把 Nori 解压到 `Program Files` 等普通用户无法直接写入的目录。
+::: warning 选择一个可以正常写入的目录
+因为 Nori 的数据就在程序目录旁边，不建议把它放在普通用户无法写入的位置，例如受系统保护的程序目录。
+:::
 
 ### 从旧版本升级
 
-旧版 Nori 曾使用系统用户目录保存数据，例如 Windows 的 `%APPDATA%\cn.erhio.noriDesktopPet\data`。当前版本会在首次启动时尝试迁移旧数据。迁移完成后，新数据以程序根目录的 `data` 文件夹为准。
+旧版 Nori 曾把数据放在系统用户目录。当前版本首次启动时会尝试迁移旧数据，之后以程序根目录的 `data` 文件夹为准。
 
-## 6. 校验下载文件
+## 可选：校验下载文件
 
-正式 Release 同时提供对应的 `.sha256` 文件。需要确认下载是否完整时，可以使用它核对压缩包的 SHA-256 值。
+Release 页面还会提供对应的 `.sha256` 文件。如果下载过程异常，或者想确认压缩包是否完整，可以用它核对文件的 SHA-256 值。

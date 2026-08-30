@@ -7,79 +7,73 @@ import {
 
 const userGuideSidebar = [
   {
-    text: '用户操作手册',
+    text: '快速上手',
     collapsed: false,
     items: [
-      { text: '手册总览与快速导航', link: '/user-guide/' },
-      {
-        text: '环境准备与安装运行',
-        link: '/user-guide/environment-and-install'
-      },
-      { text: '桌宠交互与外观调节', link: '/user-guide/desk-pet-interaction' },
-      { text: 'AI 大模型接入配置', link: '/user-guide/ai-configuration' },
-      { text: '语音交互与口型同步', link: '/user-guide/voice-and-speech' },
-      { text: '生活提醒与长期记忆', link: '/user-guide/memory-and-reminders' },
-      { text: '技能与 MCP 工具集成', link: '/user-guide/skills-and-mcp' },
-      {
-        text: '常见问题与安全排障',
-        link: '/user-guide/troubleshooting-and-faq'
-      }
+      { text: '快速上手', link: '/user-guide/' },
+      { text: '下载与安装', link: '/user-guide/environment-and-install' },
+      { text: '和桌宠互动', link: '/user-guide/desk-pet-interaction' },
+      { text: '连接 AI 模型', link: '/user-guide/ai-configuration' },
+      { text: '开启语音', link: '/user-guide/voice-and-speech' },
+      { text: '提醒与长期记忆', link: '/user-guide/memory-and-reminders' },
+      { text: '技能与 MCP', link: '/user-guide/skills-and-mcp' },
+      { text: '常见问题与排障', link: '/user-guide/troubleshooting-and-faq' }
     ]
   }
 ]
 
 const technicalSidebar = [
   {
-    text: '用户操作手册',
+    text: '开始使用',
     collapsed: false,
     items: [
-      { text: '手册总览与快速导航', link: '/user-guide/' },
-      {
-        text: '环境准备与安装运行',
-        link: '/user-guide/environment-and-install'
-      },
-      { text: '桌宠交互与外观调节', link: '/user-guide/desk-pet-interaction' },
-      { text: 'AI 大模型接入配置', link: '/user-guide/ai-configuration' },
-      { text: '语音交互与口型同步', link: '/user-guide/voice-and-speech' },
-      { text: '生活提醒与长期记忆', link: '/user-guide/memory-and-reminders' },
-      { text: '技能与 MCP 工具集成', link: '/user-guide/skills-and-mcp' },
-      {
-        text: '常见问题与安全排障',
-        link: '/user-guide/troubleshooting-and-faq'
-      }
+      { text: '快速上手', link: '/user-guide/' },
+      { text: '下载与安装', link: '/user-guide/environment-and-install' },
+      { text: '和桌宠互动', link: '/user-guide/desk-pet-interaction' },
+      { text: '连接 AI 模型', link: '/user-guide/ai-configuration' },
+      { text: '开启语音', link: '/user-guide/voice-and-speech' },
+      { text: '提醒与长期记忆', link: '/user-guide/memory-and-reminders' },
+      { text: '技能与 MCP', link: '/user-guide/skills-and-mcp' },
+      { text: '常见问题与排障', link: '/user-guide/troubleshooting-and-faq' }
     ]
   },
   {
-    text: '功能与进阶使用',
+    text: '功能与进阶',
     collapsed: false,
     items: [
-      { text: '快速开始与源码运行', link: '/guide/getting-started' },
-      { text: '界面与窗口说明', link: '/guide/ui-and-windows' },
-      { text: 'Live2D 桌宠与模型管理', link: '/guide/live2d-models' },
-      { text: 'AI 对话与 Agent 配置', link: '/guide/ai-chat-agent' },
-      { text: 'Living Memory 长期记忆', link: '/guide/memory-system' },
-      { text: '语音交互与口型同步', link: '/guide/voice-system' },
-      { text: '技能扩展与定时提醒', link: '/guide/skills-reminders' },
-      { text: 'MCP 工具集成', link: '/guide/mcp-integration' },
-      { text: '浏览器与桌面自动化', link: '/guide/automation' },
-      { text: '插件系统 NPS 2.0', link: '/guide/plugin-system' }
+      { text: '界面与窗口', link: '/guide/ui-and-windows' },
+      { text: 'Live2D 模型管理', link: '/guide/live2d-models' },
+      { text: 'AI 对话与 Agent', link: '/guide/ai-chat-agent' },
+      { text: '长期记忆', link: '/guide/memory-system' },
+      { text: '语音系统', link: '/guide/voice-system' },
+      { text: '技能与定时提醒', link: '/guide/skills-reminders' },
+      { text: 'MCP 工具', link: '/guide/mcp-integration' },
+      { text: '浏览器与桌面自动化', link: '/guide/automation' }
     ]
   },
   {
-    text: '运维与排障',
+    text: '开发与扩展',
     collapsed: false,
     items: [
-      { text: '安全模式 (--safe-mode)', link: '/operations/safe-mode' },
-      { text: '脱敏诊断与日志导出', link: '/operations/diagnostics' },
-      { text: '跨平台支持与能力差异', link: '/operations/platform-matrix' },
-      { text: '常见问题与排障 (FAQ)', link: '/operations/faq' }
+      { text: '从源码运行 Nori', link: '/guide/getting-started' },
+      { text: '安装与使用插件', link: '/guide/plugin-system' }
+    ]
+  },
+  {
+    text: '排障与兼容性',
+    collapsed: false,
+    items: [
+      { text: '安全模式', link: '/operations/safe-mode' },
+      { text: '诊断与日志', link: '/operations/diagnostics' },
+      { text: '跨平台支持', link: '/operations/platform-matrix' },
+      { text: '常见问题', link: '/operations/faq' }
     ]
   },
   {
     text: '进一步了解',
     collapsed: false,
     items: [
-      { text: '系统结构与通信说明', link: '/reference/architecture' },
+      { text: 'Nori 是怎样组成的', link: '/reference/architecture' },
       { text: '凭据与本地数据安全', link: '/reference/security-spec' }
     ]
   }
@@ -111,44 +105,47 @@ export default defineConfig({
     nav: [
       { text: '首页', link: '/' },
       {
-        text: '用户操作手册',
+        text: '开始使用',
         items: [
-          { text: '手册总览', link: '/user-guide/' },
-          {
-            text: '环境准备与安装',
-            link: '/user-guide/environment-and-install'
-          },
-          { text: '桌宠交互与外观', link: '/user-guide/desk-pet-interaction' },
-          { text: 'AI 大模型接入', link: '/user-guide/ai-configuration' },
-          { text: '语音与口型同步', link: '/user-guide/voice-and-speech' },
+          { text: '快速上手', link: '/user-guide/' },
+          { text: '下载与安装', link: '/user-guide/environment-and-install' },
+          { text: '和桌宠互动', link: '/user-guide/desk-pet-interaction' },
+          { text: '连接 AI 模型', link: '/user-guide/ai-configuration' },
+          { text: '开启语音', link: '/user-guide/voice-and-speech' },
           { text: '提醒与长期记忆', link: '/user-guide/memory-and-reminders' },
-          { text: '技能与 MCP 集成', link: '/user-guide/skills-and-mcp' },
-          {
-            text: '常见问题与排障',
-            link: '/user-guide/troubleshooting-and-faq'
-          }
+          { text: '技能与 MCP', link: '/user-guide/skills-and-mcp' },
+          { text: '常见问题与排障', link: '/user-guide/troubleshooting-and-faq' }
         ]
       },
       {
         text: '功能与进阶',
         items: [
-          { text: '快速开始与源码运行', link: '/guide/getting-started' },
-          { text: '界面与窗口说明', link: '/guide/ui-and-windows' },
-          { text: 'Live2D 渲染与模型', link: '/guide/live2d-models' },
+          { text: '界面与窗口', link: '/guide/ui-and-windows' },
+          { text: 'Live2D 模型管理', link: '/guide/live2d-models' },
           { text: 'AI 对话与 Agent', link: '/guide/ai-chat-agent' },
-          { text: 'Living Memory 记忆库', link: '/guide/memory-system' },
-          { text: '语音交互', link: '/guide/voice-system' },
+          { text: '长期记忆', link: '/guide/memory-system' },
+          { text: '语音系统', link: '/guide/voice-system' },
           { text: '技能与定时提醒', link: '/guide/skills-reminders' },
-          { text: 'MCP 工具集成', link: '/guide/mcp-integration' },
-          { text: '自动化与审计', link: '/guide/automation' },
-          { text: '插件系统 NPS 2.0', link: '/guide/plugin-system' }
+          { text: 'MCP 工具', link: '/guide/mcp-integration' },
+          { text: '自动化', link: '/guide/automation' }
         ]
       },
       {
-        text: '排障与兼容性',
+        text: '开发与扩展',
         items: [
-          { text: '安全排障模式', link: '/operations/safe-mode' },
-          { text: '脱敏诊断与日志', link: '/operations/diagnostics' },
+          { text: '从源码运行 Nori', link: '/guide/getting-started' },
+          { text: '安装与使用插件', link: '/guide/plugin-system' },
+          {
+            text: 'Nori.PluginSDK',
+            link: 'https://github.com/MF-Dust/Nori.PluginSDK'
+          }
+        ]
+      },
+      {
+        text: '排障',
+        items: [
+          { text: '安全模式', link: '/operations/safe-mode' },
+          { text: '诊断与日志', link: '/operations/diagnostics' },
           { text: '跨平台支持', link: '/operations/platform-matrix' },
           { text: '常见问题', link: '/operations/faq' }
         ]
@@ -163,10 +160,6 @@ export default defineConfig({
           {
             text: 'Nori.Desktop 源码',
             link: 'https://github.com/MF-Dust/Nori.Desktop'
-          },
-          {
-            text: 'Nori.PluginSDK',
-            link: 'https://github.com/MF-Dust/Nori.PluginSDK'
           },
           {
             text: 'Steam 商店页',
