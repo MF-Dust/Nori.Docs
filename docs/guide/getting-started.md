@@ -1,28 +1,26 @@
-# 快速开始与源码运行
+# 从源码运行 Nori
 
-这一页适合想体验最新版源码、参与测试或进行二次开发的用户。只想正常使用 Nori 时，直接查看 [环境准备与安装运行](../user-guide/environment-and-install.md) 会更省事。
+这一页面向想体验最新开发版本、参与测试或进行二次开发的用户。
 
-## 正式版下载
+::: tip 只想正常使用 Nori？
+直接查看 [下载与安装](../user-guide/environment-and-install.md) 会更省事。正式 Release 已经提供 Windows x64、Linux x64 和 macOS Apple Silicon 发布包。
+:::
 
-截至 2026 年 8 月 30 日，最新稳定版为 **v1.3.0-Serika**。
+## 准备开发环境
 
-GitHub Release 已提供：
+桌面端源码位于 [MF-Dust/Nori.Desktop](https://github.com/MF-Dust/Nori.Desktop) 的 `app/desktop/` 目录。
 
-- Windows x64 ZIP
-- Linux x64 tar.gz
-- macOS Apple Silicon ZIP
+开发环境需要：
 
-三平台发布包都采用 framework-dependent 方式，因此需要系统安装 **ASP.NET Core Runtime 10**。Windows 还需要 WebView2，Linux 需要 WebKitGTK 4.1。
+- .NET 10 SDK
+- Node.js
+- pnpm
 
-## 从源码运行
+不同系统仍需要对应的桌面运行依赖，例如 Windows WebView2 或 Linux WebKitGTK 4.1。
 
-项目源码位于 [MF-Dust/Nori.Desktop](https://github.com/MF-Dust/Nori.Desktop)。桌面端工作目录是：
+## 安装依赖并检查项目
 
-```text
-app/desktop/
-```
-
-准备好 .NET 10 SDK、Node.js 与 pnpm 后，可以执行：
+进入 `app/desktop/` 后，可以先运行：
 
 ```bash
 pnpm install
@@ -33,49 +31,48 @@ dotnet build Nori.slnx
 dotnet test Nori.slnx
 ```
 
-正常启动宿主：
+## 启动桌面端
+
+正常启动：
 
 ```bash
 dotnet run --project Nori.Desktop
 ```
 
-需要前端热更新时，可以先运行：
+需要前端热更新时，先运行：
 
 ```bash
 pnpm dev
 ```
 
-然后在另一个终端使用开发模式启动宿主：
+然后在另一个终端启动开发模式。
+
+Linux / macOS：
 
 ```bash
 NORI_DEV=1 dotnet run --project Nori.Desktop
 ```
 
-Windows PowerShell 可以使用：
+Windows PowerShell：
 
 ```powershell
 $env:NORI_DEV = "1"
 dotnet run --project Nori.Desktop
 ```
 
-## 正式发布包的目录结构
+## 正式版和源码运行有什么不同
 
-正式版会使用一个最外层启动入口管理当前可运行版本。对普通使用者来说，只需要记住两件事：
+正式 Release 会使用最外层的 `Nori` 启动入口管理当前可运行版本，并把用户数据统一保存在程序根目录的 `data` 文件夹中。
 
-1. 启动最外层的 `Nori.exe`、`Nori` 或 `Nori.app`。
-2. 保留整个解压目录，不要单独移动内部 `app-*` 文件夹。
+普通用户只需要记住从最外层启动；开发时才需要直接运行 `Nori.Desktop` 项目。
 
-程序运行数据统一保存在：
-
-```text
-<PackageRoot>/data/
-```
-
-这个目录不会包含在新下载的 Release 压缩包中，因此升级或移动程序时要保留现有 `data`。
+::: details 正式包的内部版本目录
+正式包中会看到 `.current` 和 `app-*` 等内部文件或目录。它们用于启动入口选择当前版本，日常使用时无需手动修改。
+:::
 
 ## 安全模式
 
-遇到插件、模型或外部服务导致的启动问题时，可以加上：
+排查插件、模型或外部服务引起的启动问题时，可以给正式版启动入口加上：
 
 ```text
 --safe-mode
@@ -87,12 +84,11 @@ dotnet run --project Nori.Desktop
 .\Nori.exe --safe-mode
 ```
 
-安全模式会暂时跳过部分外部服务和自动加载项，同时保留主界面、设置与诊断能力，方便修复配置。
+安全模式会跳过部分外部服务和自动加载项，同时保留设置、插件管理和诊断能力。
 
-## 当前发布边界
+## 当前平台边界
 
 - Windows x64 是主要验收平台。
-- Linux x64 和 macOS Apple Silicon 已有正式 Release 资产。
-- Linux Wayland 的全局鼠标与点击穿透能力受系统协议限制。
+- Linux x64 与 macOS Apple Silicon 已有正式 Release。
+- Linux Wayland 的全局鼠标与点击穿透能力受到系统协议限制。
 - 当前没有 Linux arm64 与 macOS Intel 正式发布包。
-- Nori 不随 Release 提供远程 Live2D 模型下载服务，本地模型需要自行导入。
