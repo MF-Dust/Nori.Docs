@@ -82,7 +82,7 @@ Windows 10/11 通常已经带有 WebView2。只有在启动时提示缺失时，
 
 初始化结束后，主控制台会打开，桌面上也会显示 Live2D 角色。
 
-🎉 到这里，Nori 已经安装完成。接下来可以继续看看 **[和桌宠互动](./desk-pet-interaction.md)**。
+🎉 到这里，Nori 已经安装完成。接下来可以继续看看 **[桌面伴侣互动](./desk-pet-interaction.md)**。
 
 ## Nori 的数据保存在哪里
 

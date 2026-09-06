@@ -1,6 +1,6 @@
 # MCP 协议扩展集成
 
-Nori Desktop Pet 全面支持 **Model Context Protocol (MCP)** 开放标准，允许为伴侣 Agent 无缝接入海量的外部工具、本地数据源与第三方服务生态。
+Nori Desktop 全面支持 **Model Context Protocol (MCP)** 开放标准，允许为伴侣 Agent 无缝接入海量的外部工具、本地数据源与第三方服务生态。
 
 ---
 

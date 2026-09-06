@@ -1,6 +1,6 @@
 # AI 对话与 Agent 配置
 
-Nori Desktop Pet 内置多模型智能 Agent 交互核心，支持与国内外主流大语言模型（LLM）建立流式对话，并具备打字机实时渲染、动作/表情指令解析以及安全工具调用能力。
+Nori Desktop 内置多模型智能 Agent 交互核心，支持与国内外主流大语言模型（LLM）建立流式对话，并具备打字机实时渲染、动作/表情指令解析以及安全工具调用能力。
 
 ---
 
@@ -50,7 +50,7 @@ sequenceDiagram
     participant Frontend as Vue 3 聊天视口
     participant Agent as C# AgentEngine
     participant LLM as 大语言模型 (LLM)
-    participant Pet as OpenGL 桌宠
+    participant Pet as OpenGL 伴侣视窗
 
     User->>Frontend: 发送消息 "今天心情怎么样？"
     Frontend->>Agent: chat_start(text)

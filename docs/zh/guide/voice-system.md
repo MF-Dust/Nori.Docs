@@ -1,6 +1,6 @@
 # 语音交互与口型同步
 
-Nori Desktop Pet 配备了全链路语音交互管线，由 C# 后端 `VoiceService` 协同主控制台前端 WebAudio 共同驱动，支持高质量文本转语音（TTS）、语音识别（STT）以及毫秒级实时嘴形同步（RMS Lip Sync）。
+Nori Desktop 配备了全链路语音交互管线，由 C# 后端 `VoiceService` 协同主控制台前端 WebAudio 共同驱动，支持高质量文本转语音（TTS）、语音识别（STT）以及毫秒级实时嘴形同步（RMS Lip Sync）。
 
 ---
 
@@ -13,7 +13,7 @@ sequenceDiagram
     participant CSharp as C# VoiceService
     participant Asset as Kestrel AssetServer
     participant WebView as main 控制台 (WebAudio 宿主)
-    participant Pet as OpenGL Live2D 桌宠
+    participant Pet as OpenGL Live2D 伴侣视窗
 
     Note over CSharp,WebView: 【TTS 播放流程】
     CSharp->>Asset: 生成音频字节流，创建一次性 Token (tts_token_123)
@@ -74,4 +74,4 @@ Nori 原生支持直连本地运行的 [GPT-SoVITS](https://github.com/RVC-Boss/
 
 - **振幅精确采样**：`main` 窗口在播放 WebAudio 时，通过 `AnalyserNode.getByteFrequencyData` 计算音频的均方根能量值（RMS）。
 - **动态映射曲线**：将分贝动态范围映射至 `[0.0, 1.0]` 的平滑过渡值。
-- **桌宠原生响应**：宿主收到振幅后，在每个渲染帧无缝插值应用到 Live2D 模型的 `ParamMouthOpenY`（嘴巴开合）与 `ParamMouthForm`（口型形态），彻底告别死板的机械循环动作，实现真实生动的说话表现。
+- **伴侣原生响应**：宿主收到振幅后，在每个渲染帧无缝插值应用到 Live2D 模型的 `ParamMouthOpenY`（嘴巴开合）与 `ParamMouthForm`（口型形态），彻底告别死板的机械循环动作，实现真实生动的说话表现。
