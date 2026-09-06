@@ -12,7 +12,7 @@ const userGuideSidebar = [
     items: [
       { text: '快速上手', link: '/user-guide/' },
       { text: '下载与安装', link: '/user-guide/environment-and-install' },
-      { text: '和桌宠互动', link: '/user-guide/desk-pet-interaction' },
+      { text: '桌面伴侣互动', link: '/user-guide/desk-pet-interaction' },
       { text: '连接 AI 模型', link: '/user-guide/ai-configuration' },
       { text: '开启语音', link: '/user-guide/voice-and-speech' },
       { text: '提醒与长期记忆', link: '/user-guide/memory-and-reminders' },
@@ -29,7 +29,7 @@ const technicalSidebar = [
     items: [
       { text: '快速上手', link: '/user-guide/' },
       { text: '下载与安装', link: '/user-guide/environment-and-install' },
-      { text: '和桌宠互动', link: '/user-guide/desk-pet-interaction' },
+      { text: '桌面伴侣互动', link: '/user-guide/desk-pet-interaction' },
       { text: '连接 AI 模型', link: '/user-guide/ai-configuration' },
       { text: '开启语音', link: '/user-guide/voice-and-speech' },
       { text: '提醒与长期记忆', link: '/user-guide/memory-and-reminders' },
@@ -80,9 +80,9 @@ const technicalSidebar = [
 ]
 
 export default defineConfig({
-  title: 'Nori Desktop Pet',
+  title: 'Nori Desktop',
   description:
-    'Nori Desktop Pet 用户文档：下载安装、Live2D 桌宠、AI、语音、记忆、MCP、插件与排障',
+    'Nori Desktop 用户文档：下载安装、Live2D 桌面伴侣、AI、语音、记忆、MCP、插件与排障',
 
   lastUpdated: true,
   cleanUrls: true,
@@ -109,12 +109,15 @@ export default defineConfig({
         items: [
           { text: '快速上手', link: '/user-guide/' },
           { text: '下载与安装', link: '/user-guide/environment-and-install' },
-          { text: '和桌宠互动', link: '/user-guide/desk-pet-interaction' },
+          { text: '桌面伴侣互动', link: '/user-guide/desk-pet-interaction' },
           { text: '连接 AI 模型', link: '/user-guide/ai-configuration' },
           { text: '开启语音', link: '/user-guide/voice-and-speech' },
           { text: '提醒与长期记忆', link: '/user-guide/memory-and-reminders' },
           { text: '技能与 MCP', link: '/user-guide/skills-and-mcp' },
-          { text: '常见问题与排障', link: '/user-guide/troubleshooting-and-faq' }
+          {
+            text: '常见问题与排障',
+            link: '/user-guide/troubleshooting-and-faq'
+          }
         ]
       },
       {
@@ -212,7 +215,7 @@ export default defineConfig({
 
     footer: {
       message: '基于 GPLv3 开源协议发布 · 文档以当前实际功能为准',
-      copyright: 'Copyright © 2025-2026 Nori Desktop Pet Team'
+      copyright: 'Copyright © 2025-2026 Nori Community'
     },
 
     docFooter: {
