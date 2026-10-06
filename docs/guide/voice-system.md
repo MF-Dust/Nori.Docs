@@ -1,77 +1,72 @@
-# 语音交互与口型同步
+# 语音系统
 
-Nori Desktop 配备了全链路语音交互管线，由 C# 后端 `VoiceService` 协同主控制台前端 WebAudio 共同驱动，支持高质量文本转语音（TTS）、语音识别（STT）以及毫秒级实时嘴形同步（RMS Lip Sync）。
+这页补充 Nori 2.x 语音功能的工作方式。日常配置只需要看 [开启语音](../user-guide/voice-and-speech.md)。
 
----
+## 整体流程
 
-## 1. 语音系统架构与一次性媒体令牌
+Nori 的播放和录音都在桌面宿主中完成，不再通过 WebView 或网页播放器中转。
 
-为了在保障音质与低延迟的同时避免跨进程大体积数据传输阻塞，Nori 设计了独特的**双向媒体传输总线**：
+一次朗读大致会经过：
 
-```mermaid
-sequenceDiagram
-    participant CSharp as C# VoiceService
-    participant Asset as Kestrel AssetServer
-    participant WebView as main 控制台 (WebAudio 宿主)
-    participant Pet as OpenGL Live2D 伴侣视窗
-
-    Note over CSharp,WebView: 【TTS 播放流程】
-    CSharp->>Asset: 生成音频字节流，创建一次性 Token (tts_token_123)
-    CSharp->>WebView: 发送广播 nori:audio-play { token: "tts_token_123" }
-    WebView->>Asset: GET /{secret}/media/tts/tts_token_123 (即取即删)
-    WebView->>WebView: WebAudio 解码播放，AnalyserNode 实时采样振幅
-    loop 播放期间 (~60Hz)
-        WebView->>CSharp: invoke("audio_level", { level: 0.65 })
-        CSharp->>Pet: 驱动 Live2D 嘴形参数 (ParamMouthOpenY)
-    end
-    WebView->>CSharp: invoke("audio_playback_finished", { token })
-
-    Note over CSharp,WebView: 【麦克风录音流程】
-    CSharp->>WebView: 发送广播 nori:audio-record-start
-    WebView->>WebView: MediaRecorder 录制麦克风音频
-    CSharp->>WebView: 发送广播 nori:audio-record-stop
-    WebView->>Asset: POST /{secret}/media/record/{token} 上传录音字节
-    CSharp->>CSharp: 调用 Whisper 识别文字，填入聊天输入框
+```text
+模型回复
+  ↓
+TTS 服务生成 WAV
+  ↓
+Nori 解码为 PCM
+  ↓
+系统音频设备播放
+  ↓
+根据播放中的音量驱动 Live2D 嘴形
 ```
 
----
+麦克风输入则由系统音频设备直接采集，再交给 Whisper 接口进行识别。
 
-## 2. TTS 语音合成提供商配置
+## 支持的 TTS
 
-在主控制台的 **「设置」→「语音设置」** 中，可选择以下 TTS 服务商：
+当前语音设置覆盖：
 
-<UiVoiceSettingsPreview />
+| 类型 | 适合的情况 |
+| :--- | :--- |
+| **OpenAI** | 使用 OpenAI 语音接口或对应兼容服务 |
+| **Gemini** | 使用 Google Gemini 的语音生成能力 |
+| **MiniMax** | 使用 MiniMax 语音接口 |
+| **IndexTTS-2** | 连接兼容的 IndexTTS-2 服务 |
+| **GPT-SoVITS** | 连接本机或局域网中的 GPT-SoVITS HTTP 服务 |
+| **Custom HTTP** | 接入自建的简单语音服务 |
 
-### 2.1 云端 TTS 提供商
+不同服务需要的字段不同，设置页会按当前类型显示对应配置。
 
-| 服务商 | 默认 Base URL | 特点与配置说明 |
-| :--- | :--- | :--- |
-| **OpenAI TTS** | `https://api.openai.com/v1` | 默认模型 `tts-1` / `tts-1-hd`，可选音色：`nova`, `alloy`, `echo`, `fable`, `onyx`, `shimmer`。 |
-| **Google Gemini TTS** | `https://generativelanguage.googleapis.com/v1beta` | 采用 Gemini 官方语音生成能力。 |
-| **MiniMax 语音** | `https://api.minimaxi.com/v1` | 极高品质的中文情感语音合成。 |
-| **Custom HTTP** | 自定义 | 兼容标准 OpenAI 格式的第三方 HTTP 语音生成接口。 |
+## 各平台怎样播放和录音
 
-### 2.2 本地部署：GPT-SoVITS 深度集成
+| 平台 | 当前后端 |
+| :--- | :--- |
+| Windows | WASAPI |
+| macOS | AudioQueue / AudioToolbox |
+| Linux | ALSA `default` |
 
-Nori 原生支持直连本地运行的 [GPT-SoVITS](https://github.com/RVC-Boss/GPT-SoVITS) 声音克隆引擎：
-- **服务地址 (Base URL)**：默认 `http://127.0.0.1:9880`。
-- **参考音频 (Reference Audio)**：本地参考样音路径（例如 `C:\voice\nori_ref.wav`）。
-- **参考文本 (Prompt Text)** 与 **语种 (Prompt Language)**：参考样音所对应的文字与语言（中文/日文/英文）。
-- **音质优势**：在本地显卡支持下，可实现极高还原度的专属二次元定制音色。
+Linux 的 `default` 设备通常可以继续交给 dmix 或 PipeWire 的 ALSA 兼容层处理。
 
----
+## 为什么要求 WAV
 
-## 3. STT 语音识别（Whisper）配置
+当前原生音频管线直接解码 RIFF/WAVE，支持常见 PCM 或浮点 WAV。
 
-- **服务商选择**：支持标准 OpenAI Whisper API 或本地自建 Whisper HTTP 服务（如 `faster-whisper` / `whisper.cpp`）。
-- **麦克风交互**：
-  - 在聊天输入框旁点击麦克风图标开启录音。
-  - 录音完成后自动上传并由 Whisper 转换为文本，无需键盘打字即可与 Nori 畅聊。
+OpenAI 兼容语音请求会明确要求 WAV；GPT-SoVITS 也会请求完整 WAV。Custom HTTP 服务如果实际返回 MP3 或 OGG，即使把 Content-Type 写成 `audio/wav` 也无法正常播放。
 
----
+一次格式错误只会让当前播放失败，不会破坏之后的语音设置。
 
-## 4. 实时 RMS 嘴形同步原理
+## 口型同步
 
-- **振幅精确采样**：`main` 窗口在播放 WebAudio 时，通过 `AnalyserNode.getByteFrequencyData` 计算音频的均方根能量值（RMS）。
-- **动态映射曲线**：将分贝动态范围映射至 `[0.0, 1.0]` 的平滑过渡值。
-- **伴侣原生响应**：宿主收到振幅后，在每个渲染帧无缝插值应用到 Live2D 模型的 `ParamMouthOpenY`（嘴巴开合）与 `ParamMouthForm`（口型形态），彻底告别死板的机械循环动作，实现真实生动的说话表现。
+嘴形取自最终播放缓冲的音量变化，因此它反映的是用户真正听到的声音。
+
+这意味着：
+
+- 不依赖网页 `AnalyserNode`
+- 不限定某一种 TTS
+- 隐藏主窗口也不会改变播放方式
+
+## 语音识别
+
+麦克风录音会整理成适合 Whisper 的 WAV，再交给已经配置好的识别服务。
+
+录音是否离开本机取决于你连接的是远程 Whisper 还是本地服务。Nori 本身不会把录音额外上传到其他位置。

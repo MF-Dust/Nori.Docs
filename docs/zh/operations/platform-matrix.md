@@ -1,66 +1,64 @@
 # 跨平台支持与能力差异
 
-Nori 现在已经同时提供 Windows、Linux 和 macOS 发布包，不过三个平台的桌面环境能力并不完全相同。
+Nori 当前提供 Windows、Linux 和 macOS 正式发布包。核心功能共用同一套 .NET 10 + Avalonia 宿主，但桌面窗口、托盘、鼠标和音频能力会受到操作系统限制。
 
 ## 当前发布状态
 
 | 平台 | 正式发布包 | 当前建议 |
 | :--- | :---: | :--- |
-| **Windows x64** | ✅ | 主要验收平台，功能覆盖最完整 |
-| **Linux x64** | ✅ | 可使用正式包，X11 与 Wayland 行为会有差异 |
-| **macOS Apple Silicon** | ✅ | 可使用正式 arm64 包，部分桌面交互与 Windows 不同 |
+| **Windows x64** | ✅ | 主要验收平台，桌面能力覆盖最完整 |
+| **Linux x64** | ✅ | 可以使用正式包，X11 与 Wayland 行为会有差异 |
+| **macOS Apple Silicon** | ✅ | 可以使用 arm64 正式包，麦克风等功能受系统权限管理 |
 
-截至 2026 年 8 月 30 日，最新稳定版 **v1.3.0-Serika** 已发布上述三种平台资产。
-
-::: tip “提供发布包”和“完整验收”是两回事
-Windows x64 仍是项目最主要的实际桌面验收平台。Linux 与 macOS 已经进入正式 Release，但不同发行版、桌面环境和系统权限设置仍可能造成体验差异。
-:::
+截至 2026 年 10 月 6 日，最新稳定版为 **v2.0.2-Kei**。
 
 ## 常见能力差异
 
 | 功能 | Windows x64 | Linux X11 | Linux Wayland | macOS Apple Silicon |
 | :--- | :---: | :---: | :---: | :---: |
 | Live2D 伴侣视窗 | ✅ | ✅ | ✅ | ✅ |
-| 主控制台 | ✅ | ✅ | ✅ | ✅ |
+| 原生用户界面 | ✅ | ✅ | ✅ | ✅ |
 | 伴侣窗口置顶 | ✅ | ✅ | ✅ | ✅ |
 | 透明区域点击穿透 | ✅ | ✅ | 有限制 | ✅ |
 | 全局鼠标视线跟随 | ✅ | ✅ | 有限制 | ✅ |
 | 系统托盘 | ✅ | 取决于桌面环境 | 取决于桌面环境 | ✅ |
-| 麦克风语音输入 | ✅ | ✅ | ✅ | ✅，需要系统授权 |
+| 音频播放/录音 | WASAPI | ALSA | ALSA | AudioQueue |
 | 浏览器自动化 | ✅，需要 Edge | 暂不支持 | 暂不支持 | 暂不支持 |
 
 ## Linux 用户需要注意什么
 
 ### X11
 
-X11 下可以使用伴侣视窗点击穿透和全局鼠标跟随等能力，实际效果仍取决于窗口管理器和显卡驱动。
+X11 可以提供全局鼠标和窗口输入区域，因此点击穿透、视线跟随等桌面伴侣功能通常更完整。
 
 ### Wayland
 
-Wayland 对全局鼠标位置和窗口输入区域有更严格的限制，因此 Nori 会自动采用兼容模式：
+Wayland 对全局输入和窗口输入区域限制更严格。Nori 会根据能力自动降级，例如：
 
 - 伴侣视窗可能保持整窗可点击。
 - 视线跟随可能只在窗口范围内工作。
-- 某些拖动行为会根据桌面环境能力调整。
+- 部分拖动行为会交给桌面环境处理。
 
 这些限制不会阻止 Live2D 正常渲染。
 
 ## 系统托盘
 
-Windows 和 macOS 通常可以直接使用托盘入口。
+Windows 和 macOS 通常可以直接使用托盘。
 
-Linux 是否能显示托盘取决于当前桌面环境是否提供对应支持。如果托盘不可用，Nori 会在主界面保留可操作入口，不会因为托盘缺失而无法控制伴侣。
+Linux 是否显示托盘取决于桌面环境和 StatusNotifier 支持。托盘不可用时，不会影响 Nori 本身启动。
 
 ## 运行时要求
 
-三平台当前正式包都采用 framework-dependent 分发，需要系统提供 **ASP.NET Core Runtime 10**。
+三平台正式包都是 framework-dependent 发布，需要 **.NET Runtime 10**。
 
-额外依赖：
+额外需要：
 
-- Windows：Microsoft Edge WebView2 Evergreen Runtime
-- Linux：WebKitGTK 4.1、GTK 与可用 OpenGL 驱动
-- macOS：系统 WebKit
+- Windows：Windows 10/11 x64
+- Linux：GTK 3、`libasound2t64` 或 `libasound2`、可用 OpenGL 驱动
+- macOS：Apple Silicon；麦克风功能需要系统授权
 
-## 当前没有提供的发布平台
+2.x 原生界面不再要求 WebView2 或 WebKitGTK 作为主界面运行依赖。
 
-当前 Release 没有提供 Linux arm64，也没有提供 macOS Intel 的正式资产。文档不会把“源码层面可能可编译”写成“已有正式发布包”。
+## 当前没有正式发布的架构
+
+当前 Release 没有 Linux arm64，也没有 macOS Intel 正式资产。源码可能可以继续适配其他架构，但文档不会把“理论可编译”写成“已有正式支持”。

@@ -1,58 +1,59 @@
 # 下载与安装
 
-本教程会带你完成 Nori 的下载、解压和第一次启动。第一次使用时按顺序操作即可。
+这页会带你完成 Nori 的下载、解压和第一次启动。
 
 ::: tip 当前稳定版
-截至 2026 年 8 月 30 日，最新正式版本为 **v1.3.0-Serika**。
+截至 2026 年 10 月 6 日，最新正式版本为 **v2.0.2-Kei**。
 :::
 
 ## 1. 下载 Nori
 
-前往 [Nori.Desktop Releases](https://github.com/MF-Dust/Nori.Desktop/releases/latest)，根据当前设备选择发布包：
+前往 [Nori.Desktop Releases](https://github.com/MF-Dust/Nori.Desktop/releases/latest)，根据设备选择发布包：
 
-| 你的设备 | 下载这个文件 |
+| 你的设备 | 下载文件 |
 | :--- | :--- |
-| **Windows x64** | `nori-1.3.0-Serika-win-x64-framework-dependent.zip` |
-| **Linux x64** | `nori-1.3.0-Serika-linux-x64.tar.gz` |
-| **macOS Apple Silicon** | `nori-1.3.0-Serika-osx-arm64.zip` |
+| **Windows x64** | `nori-2.0.2-Kei-win-x64-framework-dependent.zip` |
+| **Linux x64** | `nori-2.0.2-Kei-linux-x64.tar.gz` |
+| **macOS Apple Silicon** | `nori-2.0.2-Kei-osx-arm64.zip` |
 
-Windows x64 是目前主要的完整验收平台。Linux 和 macOS 已经提供正式发布包，部分桌面交互在不同系统环境下会有差异。
+Windows x64 是目前最主要的验收平台。Linux 和 macOS 可以使用正式包，但部分桌面交互会受到桌面环境和系统权限影响。
 
 ## 2. 安装运行环境
 
-Nori 的正式发布包需要系统先安装对应的 .NET 运行环境。
+当前正式包采用 framework-dependent 分发，因此系统需要安装 **.NET Runtime 10**。
 
 ### Windows x64
 
 需要：
 
-- **ASP.NET Core Runtime 10 x64**
-- **Microsoft Edge WebView2 Evergreen Runtime**
+- Windows 10 或 Windows 11 x64
+- .NET Runtime 10
 
-Windows 10/11 通常已经带有 WebView2。只有在启动时提示缺失时，才需要另外安装。
+2.x 的用户界面已经使用 Avalonia 原生窗口，不再要求 WebView2 作为 Nori 主界面的运行依赖。
 
 ### Linux x64
 
 需要：
 
-- **ASP.NET Core Runtime 10**
-- **WebKitGTK 4.1**
-- GTK 与可用的 OpenGL 驱动
+- .NET Runtime 10
+- GTK 3
+- ALSA 运行库
+- 可用的 OpenGL 驱动
+
+在 Ubuntu 24.04 及较新的环境中，ALSA 包通常是 `libasound2t64`；较旧发行版常见为 `libasound2`。
 
 ### macOS Apple Silicon
 
 需要：
 
-- **ASP.NET Core Runtime 10**
-- 系统自带 WebKit
+- Apple Silicon Mac
+- .NET Runtime 10
 
-::: details 为什么还需要安装运行环境？
-当前 Release 为 framework-dependent 发布包，因此不会把完整 .NET 运行时一起打进压缩包。这里安装一次运行环境即可，平时使用 Nori 不需要处理这些内部细节。
-:::
+使用麦克风时，macOS 会按系统规则请求麦克风权限。
 
 ## 3. 解压并启动
 
-下载完成后，请把压缩包完整解压到一个固定目录，不要直接在压缩包里运行。
+下载完成后，把整个压缩包解压到固定目录，不要直接在压缩包中运行。
 
 ### Windows
 
@@ -68,8 +69,8 @@ Windows 10/11 通常已经带有 WebView2。只有在启动时提示缺失时，
 
 解压 ZIP 后，启动最外层的 **`Nori.app`**。
 
-::: important 请从最外层启动 Nori
-解压目录中还会看到内部版本文件。日常使用时只需要启动最外层的 `Nori.exe`、`Nori` 或 `Nori.app`，也不要只移动其中某个内部文件夹。
+::: important 从最外层入口启动
+发布包中还会看到 `.current` 和 `app-*` 等内部版本文件。日常使用时不需要进入这些目录，也不要单独移动内部版本目录。
 :::
 
 ## 4. 完成第一次设置
@@ -78,15 +79,13 @@ Windows 10/11 通常已经带有 WebView2。只有在启动时提示缺失时，
 
 <UiWizardPreview />
 
-跟随向导完成语言和基础设置即可。AI 服务可以当场配置，也可以先跳过，之后再到设置中完成。
+跟随向导完成语言和基础设置即可。AI 服务可以当场配置，也可以先跳过，之后再从设置中补上。
 
-初始化结束后，主控制台会打开，桌面上也会显示 Live2D 角色。
+完成后，Nori 会进入桌面伴侣状态，其他功能窗口可以按需要打开。
 
-🎉 到这里，Nori 已经安装完成。接下来可以继续看看 **[桌面伴侣互动](./desk-pet-interaction.md)**。
+## 数据保存在哪里
 
-## Nori 的数据保存在哪里
-
-Nori 会把设置、聊天、记忆、本地模型、插件和日志保存在程序根目录的 `data` 文件夹中。
+当前版本把运行数据统一保存在 Nori 根目录下的 `data` 文件夹：
 
 ```text
 Nori/
@@ -95,16 +94,16 @@ Nori/
 └── data/
 ```
 
-因此移动 Nori 时，保留整个文件夹最省心；更新程序时，也请保留原来的 `data` 文件夹。
+设置、数据库、本地模型、插件和日志都会从这里管理。移动或备份 Nori 时，保留整个根目录最省心。
 
-::: warning 选择一个可以正常写入的目录
-因为 Nori 的数据就在程序目录旁边，不建议把它放在普通用户无法写入的位置，例如受系统保护的程序目录。
+::: warning 选择可写目录
+Nori 会在程序目录旁写入 `data`。不要把它放在普通用户没有写入权限的受保护目录中。
 :::
 
-### 从旧版本升级
+## 从较老版本升级
 
-旧版 Nori 曾把数据放在系统用户目录。当前版本首次启动时会尝试迁移旧数据，之后以程序根目录的 `data` 文件夹为准。
+2.x 的数据布局已经统一到包根目录。升级前保留旧版数据备份；如果升级后发现历史数据没有出现，不要先删除旧目录，可以结合 [诊断与日志](../operations/diagnostics.md) 继续确认。
 
 ## 可选：校验下载文件
 
-Release 页面还会提供对应的 `.sha256` 文件。如果下载过程异常，或者想确认压缩包是否完整，可以用它核对文件的 SHA-256 值。
+Release 页面同时提供对应的 `.sha256` 文件。下载过程异常，或者想确认文件是否完整时，可以核对 SHA-256。
