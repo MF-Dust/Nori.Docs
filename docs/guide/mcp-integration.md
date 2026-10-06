@@ -1,91 +1,73 @@
-# MCP 协议扩展集成
+# MCP 工具集成
 
-Nori Desktop 全面支持 **Model Context Protocol (MCP)** 开放标准，允许为伴侣 Agent 无缝接入海量的外部工具、本地数据源与第三方服务生态。
+MCP 可以把外部工具接入 Nori，让 Agent 在对话中使用本机程序或远程服务提供的能力。
 
----
+第一次配置时，也可以先看 [技能与 MCP](../user-guide/skills-and-mcp.md)。
 
-## 1. 什么是 MCP 与核心运行模式
+## 支持的连接方式
 
-MCP（模型上下文协议）是由 Anthropic 主导的标准通信协议。通过 MCP，Nori 可以安全地调用本地文件系统、执行终端命令、查询数据库或调用网络 API。
+Nori 当前支持：
 
-### Nori 支持的两种传输模式（Transports）
+### stdio
 
-1. **`stdio` 管道传输（主流推荐）**：
-   - 宿主直接拉起子进程并通过标准输入/输出流通信。
-   - 适用于 Node.js (`npx`)、Python (`uvx` / `python`) 等本地命令行服务。
-2. **`sse` 服务端事件流传输**：
-   - 通过 HTTP Server-Sent Events 与常驻或远程服务器通信。
-   - 适用于 Docker 容器或局域网服务。
+Nori 启动一个本机命令行 MCP 服务，并通过标准输入输出通信。
 
----
+适合 Node.js、Python 或其他本机工具。
 
-## 2. 配置与管理 MCP 服务器
+常见配置包括：
 
-进入主控制台的 **「设置」→「MCP」**，点击 **「添加服务器」**：
+- 服务名称
+- 启动命令
+- 参数
+- 环境变量
 
-```text
-┌────────────────────────────────────────────────────────┐
-│ 添加 MCP 服务器                                        │
-├────────────────────────────────────────────────────────┤
-│ 服务名称: 本地文件系统 (Filesystem)                   │
-│ 传输协议: [ Stdio ]                                    │
-│ 执行命令: npx                                          │
-│ 运行参数: -y @modelcontextprotocol/server-filesystem   │
-│           C:\Users\SakuraStar\Desktop                  │
-│ 环境变量: KEY=VALUE (可选)                             │
-│ 开关设置: [x] 启用服务   [x] 启动时自动连接            │
-└────────────────────────────────────────────────────────┘
-```
+### SSE
 
-### 常见实用 MCP 服务器配置示例
+Nori 连接一个 HTTP 或 HTTPS 的 SSE MCP 服务。
 
-#### 1. 文件系统操作 (`@modelcontextprotocol/server-filesystem`)
-- **Transport**: `stdio`
-- **Command**: `npx`
-- **Args**: `["-y", "@modelcontextprotocol/server-filesystem", "C:\\Workspace"]`
+这种方式更适合已经单独运行的服务、局域网服务或容器环境。
 
-#### 2. 网页内容抓取与检索 (`fetch`)
-- **Transport**: `stdio`
-- **Command**: `uvx`
-- **Args**: `["mcp-server-fetch"]`
+## 添加和管理服务器
 
-#### 3. GitHub 仓库管理 (`@modelcontextprotocol/server-github`)
-- **Transport**: `stdio`
-- **Command**: `npx`
-- **Args**: `["-y", "@modelcontextprotocol/server-github"]`
-- **Environment**: `{"GITHUB_PERSONAL_ACCESS_TOKEN": "ghp_..."}`
-
----
-
-## 3. 工具发现、手动调试与人工审批机制
+进入 **设置 → MCP**：
 
 <UiMcpPreview />
 
-```mermaid
-sequenceDiagram
-    participant LLM as Agent 模型
-    participant McpMgr as Nori MCP 管理器
-    participant UI as 主控制台审批卡片
-    participant Server as MCP 外部进程
+可以添加、编辑、启用或停用服务器，并查看连接状态和服务公开的工具。
 
-    LLM->>McpMgr: 决定调用高危工具: filesystem_write_file(path, content)
-    McpMgr->>UI: 拦截并挂起执行，推送审批请求 (Approval Card)
-    Note over UI: 用户核对工具名、目标路径与写入内容
-    alt 用户点击「允许执行」
-        UI->>McpMgr: approval_respond(requestId, approved: true)
-        McpMgr->>Server: 转发执行指令
-        Server-->>McpMgr: 返回执行结果
-        McpMgr-->>LLM: 回传工具产物，继续对话
-    else 用户点击「拒绝」
-        UI->>McpMgr: approval_respond(requestId, approved: false)
-        McpMgr-->>LLM: 告知模型调用已被用户显式拒绝
-    end
-```
+stdio 和 SSE 需要填写的字段不同，设置窗口会按当前传输方式显示对应内容。
 
-### 3.1 工具列表与手动测试
-- 在「MCP 设置」中切换至 **「内置与工具」** 标签页，可查看所有已连接服务暴露的 Tool 函数签名与参数 Schema。
-- 提供 **手动测试运行窗口**，方便开发者在不消耗对话 Token 的情况下直接验证单项工具的输入与输出。
+## 环境变量与敏感信息
 
-### 3.2 人工在环二次审批（Human-In-The-Loop）
-- 对于涉及文件写入、外部修改或敏感操作的工具，Nori 的 Agent 会在聊天视口中弹出明晰的 **审批卡片（Approval Drawer）**。
-- 只有在用户亲自确认无误并点击「批准」后，外部进程才会真正执行，彻底杜绝大模型“幻觉”导致的破坏性误操作。
+stdio 服务常通过环境变量读取访问凭据。
+
+这类值会按 Nori 的敏感配置规则保存。不要把凭据直接写进普通技能说明、聊天内容或公开配置示例。
+
+## 工具怎样进入对话
+
+MCP 服务连接成功后，Nori 会读取它提供的工具，并根据当前权限把可用工具交给 Agent。
+
+模型决定使用某个工具时，Nori 仍会检查：
+
+- 当前服务是否连接
+- 工具是否可用
+- 是否处于安全模式
+- 当前操作是否需要人工确认
+
+## 审批
+
+涉及外部修改或其他需要确认的工具时，界面会先展示待执行内容。
+
+同意后才会继续执行；拒绝后，当前调用会取消，Agent 可以根据结果继续对话。
+
+## 手动测试
+
+MCP 设置里可以查看工具信息，并对单项工具做测试。
+
+这适合排查“服务已经连接，但某个工具本身不能正常工作”的情况，也能避免把所有问题都归到聊天模型上。
+
+## 连接失败时
+
+stdio 可以先在终端中直接运行同样的命令和参数；SSE 则可以先确认地址在当前网络环境中可以访问。
+
+安全模式不会自动连接外部 MCP 服务。
